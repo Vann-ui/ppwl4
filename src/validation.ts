@@ -62,6 +62,23 @@ const app = new Elysia()
     }
   )
 
+  // PRAKTIKUM 3 - VALIDASI RESPONSE
+  .get(
+    "/stats",
+    () => {
+      return {
+        total: 100,
+        active: 75,
+      };
+    },
+    {
+      response: t.Object({
+        total: t.Number(),
+        active: t.Number(),
+      }),
+    }
+  )
+
   .listen(3000);
 
 console.log(
