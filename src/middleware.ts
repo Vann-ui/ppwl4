@@ -28,8 +28,8 @@ const app = new Elysia()
       message: "Welcome to Dashboard",
     }),
     {
-      beforeHandle({ headers, set }) {
-        if (!headers.authorization) {
+      beforeHandle({ request, set }) {
+        if (!request.headers.get("authorization")) {
           set.status = 401;
           return {
             success: false,
@@ -57,6 +57,47 @@ const app = new Elysia()
         total: t.Number(),
         active: t.Number(),
       }),
+    }
+  )
+
+  // PRAKTIKUM 4 - beforeHandle (Authorization Required)
+  .get(
+    "/admin",
+    () => {
+      return {
+        stats: 99,
+      };
+    },
+    {
+      beforeHandle({ request, set }) {
+        const auth = request.headers.get("authorization");
+        if (!auth || auth !== "Bearer 123") {
+          set.status = 401;
+          return {
+            success: false,
+            message: "Unauthorized",
+          };
+        }
+      },
+      response: t.Object({
+        stats: t.Number(),
+      }),
+    }
+  )
+
+  // 2.5 afterHandle - Modify Response (scoped to /profile)
+  .get(
+    "/profile",
+    () => ({
+      name: "Nama kamu",
+    }),
+    {
+      afterHandle: ({ response }) => {
+        return {
+          success: true,
+          data: response,
+        };
+      },
     }
   )
 
